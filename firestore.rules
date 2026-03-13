@@ -1,0 +1,80 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && getUserData().role == 'admin';
+    }
+
+    function isSuperAdmin() {
+      return isAuthenticated() && (
+        getUserData().role == 'superadmin' || 
+        request.auth.token.email == "ndejjesuperadmin@sport.com"
+      );
+    }
+
+    function isValidUser(data) {
+      return data.keys().hasAll(['uid', 'email', 'role']) &&
+             data.uid is string &&
+             data.email is string &&
+             data.role in ['user', 'admin', 'superadmin'];
+    }
+
+    // ===============================================================
+    // Collection Rules
+    // ===============================================================
+
+    // User Profiles
+    match /users/{userId} {
+      allow read: if isAuthenticated() && (isOwner(userId) || isSuperAdmin());
+      allow create: if isAuthenticated() && isOwner(userId) && isValidUser(request.resource.data);
+      allow update: if isAuthenticated() && (
+        (isOwner(userId) && request.resource.data.role == resource.data.role) || 
+        isSuperAdmin()
+      );
+    }
+
+    // Security Notifications
+    match /security_notifications/{notificationId} {
+      allow read: if isSuperAdmin();
+      allow create: if true; // Allow logging failures even if not logged in
+      allow update, delete: if isSuperAdmin();
+    }
+
+    // Auth Attempts
+    match /auth_attempts/{emailKey} {
+      allow read: if true;
+      allow create, update: if true; // System needs to manage this
+      allow delete: if isSuperAdmin();
+    }
+
+    // Fixtures
+    match /fixtures/{fixtureId} {
+      allow read: if true;
+      allow create, update, delete: if isSuperAdmin() || (
+        isAdmin() && 
+        getUserData().sport == request.resource.data.sport &&
+        getUserData().level == request.resource.data.category
+      );
+    }
+
+    // Default Deny
+    match /{path=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "User Profile",
+      "description": "Stores user account information and roles.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "displayName": { "type": "string" },
+        "username": { "type": "string" },
+        "role": { "type": "string", "enum": ["user", "admin", "superadmin"] },
+        "sport": { "type": "string" },
+        "level": { "type": "string", "enum": ["Junior", "Intermediate", "Senior"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "SecurityNotification": {
+      "title": "Security Notification",
+      "description": "Logs failed login attempts and suspicious activities.",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string" },
+        "type": { "type": "string" },
+        "category": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "time": { "type": "string" },
+        "status": { "type": "string", "enum": ["unread", "read"] }
+      }
+    },
+    "AuthAttempt": {
+      "title": "Auth Attempt",
+      "description": "Tracks failed login attempts per email to prevent brute force.",
+      "type": "object",
+      "properties": {
+        "count": { "type": "integer" },
+        "lastAttempt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "Fixture": {
+      "title": "Fixture",
+      "description": "Sports match fixture information.",
+      "type": "object",
+      "properties": {
+        "sport": { "type": "string" },
+        "teamA": { "type": "string" },
+        "teamB": { "type": "string" },
+        "date": { "type": "string" },
+        "time": { "type": "string" },
+        "category": { "type": "string" },
+        "gender": { "type": "string" },
+        "status": { "type": "string", "enum": ["scheduled", "completed", "cancelled"] }
+      }
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profiles collection."
+    },
+    "/security_notifications/{notificationId}": {
+      "schema": "SecurityNotification",
+      "description": "Security alerts for super admins."
+    },
+    "/auth_attempts/{emailKey}": {
+      "schema": "AuthAttempt",
+      "description": "Brute force protection tracking."
+    },
+    "/fixtures/{fixtureId}": {
+      "schema": "Fixture",
+      "description": "Sports match fixtures."
+    }
+  }
+}
