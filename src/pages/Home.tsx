@@ -75,6 +75,19 @@ export default function Home() {
   const [activeSportTab, setActiveSportTab] = useState('Football');
   const { scrollY } = useScroll();
   const y1 = useTransform(scrollY, [0, 500], [0, 200]);
+  const eventsScrollRef = useRef<HTMLDivElement>(null);
+
+  const scrollEvents = (direction: 'left' | 'right') => {
+    if (eventsScrollRef.current) {
+      const { scrollLeft, clientWidth } = eventsScrollRef.current;
+      // Scroll by roughly two cards width (approx 700px + gap)
+      const scrollAmount = clientWidth > 768 ? 750 : 350; 
+      eventsScrollRef.current.scrollTo({
+        left: direction === 'left' ? scrollLeft - scrollAmount : scrollLeft + scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
 
   const upcomingEvents = [
     { id: 1, sport: 'Football', teamA: 'Muteesa', teamB: 'Lumumba', date: '2026-03-20T15:00:00', icon: '⚽' },
@@ -125,7 +138,7 @@ export default function Home() {
             className="w-full h-full object-cover opacity-30"
             referrerPolicy="no-referrer"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-sports-black via-transparent to-sports-black" />
+          <div className="absolute inset-0 bg-gradient-to-b from-app-bg via-transparent to-app-bg" />
         </motion.div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 text-center">
@@ -146,11 +159,11 @@ export default function Home() {
                 </motion.span>
               ))}
             </div>
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter text-white mb-4 leading-none uppercase">
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter text-app-text mb-4 leading-none uppercase">
               NDEJJE <span className="text-gold">SPORTS</span> <br />
               <span className="text-sky-blue text-3xl md:text-5xl lg:text-6xl">MANAGEMENT SYSTEM</span>
             </h1>
-            <p className="text-xl md:text-2xl text-gray-300 font-medium tracking-wide mb-12 max-w-3xl mx-auto italic">
+            <p className="text-xl md:text-2xl text-app-text/70 font-medium tracking-wide mb-12 max-w-3xl mx-auto italic">
               "Tracking Performance, Celebrating Champions"
             </p>
             <div className="flex flex-wrap items-center justify-center gap-6">
@@ -161,28 +174,38 @@ export default function Home() {
               <button onClick={() => scrollToSection('leaderboard')} className="btn-secondary">
                 View Leaderboard
               </button>
-              <button onClick={() => scrollToSection('leaderboard')} className="btn-outline-gold">
-                Latest Results
-              </button>
             </div>
           </motion.div>
         </div>
       </section>
 
       {/* 2. Upcoming Sports Events Section */}
-      <section className="py-24 bg-sports-gray/30 relative">
+      <section className="py-24 bg-app-card relative">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between mb-12">
-            <h2 className="text-3xl font-black text-white uppercase tracking-tight">
+            <h2 className="text-3xl font-black text-app-text uppercase tracking-tight">
               Upcoming <span className="text-gold">Sports Events</span>
             </h2>
             <div className="flex space-x-2">
-              <button className="p-2 glass-card hover:bg-gold hover:text-black transition-all"><ChevronLeft className="h-5 w-5" /></button>
-              <button className="p-2 glass-card hover:bg-gold hover:text-black transition-all"><ChevronRight className="h-5 w-5" /></button>
+              <button 
+                onClick={() => scrollEvents('left')}
+                className="p-2 glass-card hover:bg-gold hover:text-black transition-all"
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </button>
+              <button 
+                onClick={() => scrollEvents('right')}
+                className="p-2 glass-card hover:bg-gold hover:text-black transition-all"
+              >
+                <ChevronRight className="h-5 w-5" />
+              </button>
             </div>
           </div>
 
-          <div className="flex overflow-x-auto gap-6 pb-8 scrollbar-hide snap-x">
+          <div 
+            ref={eventsScrollRef}
+            className="flex overflow-x-auto gap-6 pb-8 scrollbar-hide snap-x snap-mandatory"
+          >
             {upcomingEvents.map((event) => (
               <motion.div 
                 key={event.id}
@@ -198,13 +221,13 @@ export default function Home() {
                   </div>
                   <span className="text-sm font-bold text-sky-blue uppercase tracking-widest">{event.sport}</span>
                 </div>
-                <div className="text-2xl font-black text-white mb-4 flex items-center justify-between">
+                <div className="text-2xl font-black text-app-text mb-4 flex items-center justify-between">
                   <span>{event.teamA}</span>
                   <span className="text-gold text-sm mx-2 italic">VS</span>
                   <span>{event.teamB}</span>
                 </div>
-                <div className="flex items-center justify-between pt-6 border-t border-white/5">
-                  <div className="text-xs text-gray-400 font-bold uppercase tracking-widest">
+                <div className="flex items-center justify-between pt-6 border-t border-app-border">
+                  <div className="text-xs text-app-text/50 font-bold uppercase tracking-widest">
                     {event.date.split('T')[0]} • {event.date.split('T')[1].substring(0, 5)}
                   </div>
                   <CountdownTimer targetDate={event.date} />
@@ -226,21 +249,21 @@ export default function Home() {
             <div className="inline-block py-1 px-4 rounded-full bg-sky-blue/10 text-sky-blue text-xs font-bold tracking-widest uppercase mb-6 border border-sky-blue/20">
               Season Review
             </div>
-            <h2 className="text-4xl md:text-5xl font-black text-white mb-8 leading-tight uppercase">
+            <h2 className="text-4xl md:text-5xl font-black text-app-text mb-8 leading-tight uppercase">
               A Season of <span className="text-gold">Unmatched Grit</span> and Excellence
             </h2>
-            <div className="prose prose-invert max-w-none text-gray-400 leading-relaxed">
-              <p className="text-lg mb-6 italic text-white/80">"The 2025 season was a testament to the spirit of Ndejje athletes. From the muddy football pitches to the strategic chess boards, every house showed incredible determination."</p>
+            <div className="prose dark:prose-invert max-w-none text-app-text/70 leading-relaxed">
+              <p className="text-lg mb-6 italic text-app-text/80">"The 2025 season was a testament to the spirit of Ndejje athletes. From the muddy football pitches to the strategic chess boards, every house showed incredible determination."</p>
               <p className="mb-6">
                 Our Sports Teacher, Mr. Ssekandi, noted that this year saw a record-breaking participation rate. Muteesa House dominated the track events, while Lumumba House proved their tactical prowess in Basketball and Chess.
               </p>
               <div className="grid grid-cols-2 gap-6 mt-10">
                 <div className="p-4 glass-card border-l-4 border-gold">
-                  <h4 className="text-white font-bold mb-1 uppercase text-xs">Key Achievement</h4>
+                  <h4 className="text-app-text font-bold mb-1 uppercase text-xs">Key Achievement</h4>
                   <p className="text-sm">New record in 100m Senior Boys sprint.</p>
                 </div>
                 <div className="p-4 glass-card border-l-4 border-sky-blue">
-                  <h4 className="text-white font-bold mb-1 uppercase text-xs">Notable Competition</h4>
+                  <h4 className="text-app-text font-bold mb-1 uppercase text-xs">Notable Competition</h4>
                   <p className="text-sm">The Handball finals reached triple overtime.</p>
                 </div>
               </div>
@@ -261,7 +284,7 @@ export default function Home() {
             />
             <div className="absolute bottom-6 left-6 right-6 p-6 glass-card">
               <p className="text-sm font-bold text-gold uppercase tracking-widest mb-1">Sports Teacher</p>
-              <p className="text-xl font-black text-white">Mr. Ssekandi</p>
+              <p className="text-xl font-black text-app-text">Mr. Ssekandi</p>
             </div>
           </motion.div>
         </div>
@@ -293,14 +316,14 @@ export default function Home() {
                 <Medal className="h-8 w-8 text-gold" />
                 <span className="text-xl font-black text-gold uppercase tracking-widest">Sportsman of the Year</span>
               </div>
-              <h2 className="text-5xl md:text-6xl font-black text-white mb-4 uppercase tracking-tighter">
+              <h2 className="text-5xl md:text-6xl font-black text-app-text mb-4 uppercase tracking-tighter">
                 Kato <span className="text-gold">Ivan</span>
               </h2>
               <div className="flex flex-wrap justify-center lg:justify-start gap-4 mb-8">
                 <span className="bg-sky-blue/20 text-sky-blue px-4 py-1 rounded-full text-sm font-bold border border-sky-blue/30">Muteesa House</span>
                 <span className="bg-gold/20 text-gold px-4 py-1 rounded-full text-sm font-bold border border-gold/30">Football & Athletics</span>
               </div>
-              <p className="text-gray-300 text-lg leading-relaxed max-w-2xl mb-8">
+              <p className="text-app-text/70 text-lg leading-relaxed max-w-2xl mb-8">
                 Ivan led Muteesa House to victory in the Football finals and broke the long-standing record in the 200m Senior Boys sprint. His leadership and dedication have set a new standard for excellence at Ndejje.
               </p>
               <button className="btn-primary">View Full Profile</button>
@@ -313,23 +336,23 @@ export default function Home() {
       <section id="leaderboard" className="py-24">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-black text-white uppercase tracking-tight mb-4">
+            <h2 className="text-4xl font-black text-app-text uppercase tracking-tight mb-4">
               Last Season <span className="text-gold">Leaderboard</span>
             </h2>
-            <p className="text-gray-400">Final standings based on points accumulated across all sports.</p>
+            <p className="text-app-text/60">Final standings based on points accumulated across all sports.</p>
           </div>
 
           <div className="glass-card overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left">
                 <thead>
-                  <tr className="bg-white/5 border-b border-white/10">
-                    <th className="px-8 py-6 text-xs font-bold uppercase tracking-widest text-gray-500">Rank</th>
-                    <th className="px-8 py-6 text-xs font-bold uppercase tracking-widest text-gray-500">House Name</th>
-                    <th className="px-8 py-6 text-xs font-bold uppercase tracking-widest text-gray-500">Points</th>
-                    <th className="px-8 py-6 text-xs font-bold uppercase tracking-widest text-gray-500">Gold</th>
-                    <th className="px-8 py-6 text-xs font-bold uppercase tracking-widest text-gray-500">Silver</th>
-                    <th className="px-8 py-6 text-xs font-bold uppercase tracking-widest text-gray-500">Bronze</th>
+                  <tr className="bg-app-card/50 border-b border-app-border">
+                    <th className="px-8 py-6 text-xs font-bold uppercase tracking-widest text-app-text/40">Rank</th>
+                    <th className="px-8 py-6 text-xs font-bold uppercase tracking-widest text-app-text/40">House Name</th>
+                    <th className="px-8 py-6 text-xs font-bold uppercase tracking-widest text-app-text/40">Points</th>
+                    <th className="px-8 py-6 text-xs font-bold uppercase tracking-widest text-app-text/40">Gold</th>
+                    <th className="px-8 py-6 text-xs font-bold uppercase tracking-widest text-app-text/40">Silver</th>
+                    <th className="px-8 py-6 text-xs font-bold uppercase tracking-widest text-app-text/40">Bronze</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
@@ -339,20 +362,20 @@ export default function Home() {
                       initial={{ opacity: 0, y: 20 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       transition={{ delay: i * 0.1 }}
-                      className={`hover:bg-white/5 transition-colors ${i === 0 ? 'bg-gold/5' : ''}`}
+                      className={`hover:bg-app-card transition-colors ${i === 0 ? 'bg-gold/5' : ''}`}
                     >
                       <td className="px-8 py-6">
-                        <span className={`text-2xl font-black ${i === 0 ? 'text-gold' : i === 1 ? 'text-gray-300' : i === 2 ? 'text-orange-400' : 'text-white/20'}`}>
+                        <span className={`text-2xl font-black ${i === 0 ? 'text-gold' : i === 1 ? 'text-app-text/50' : i === 2 ? 'text-orange-400' : 'text-app-text/20'}`}>
                           {i + 1 < 10 ? `0${i + 1}` : i + 1}
                         </span>
                       </td>
                       <td className="px-8 py-6">
                         <div className="flex items-center space-x-3">
                           <div className={`w-2 h-8 rounded-full ${i === 0 ? 'bg-gold' : 'bg-sky-blue'}`} />
-                          <span className="font-bold text-white text-lg">{row.house}</span>
+                          <span className="font-bold text-app-text text-lg">{row.house}</span>
                         </div>
                       </td>
-                      <td className="px-8 py-6 font-mono text-xl text-white">
+                      <td className="px-8 py-6 font-mono text-xl text-app-text">
                         <Counter end={row.points} />
                       </td>
                       <td className="px-8 py-6">
@@ -362,7 +385,7 @@ export default function Home() {
                         </div>
                       </td>
                       <td className="px-8 py-6">
-                        <div className="flex items-center space-x-2 text-gray-300 font-bold">
+                        <div className="flex items-center space-x-2 text-app-text/80 font-bold">
                           <Medal className="h-4 w-4" />
                           <span>{row.silver}</span>
                         </div>
@@ -383,10 +406,10 @@ export default function Home() {
       </section>
 
       {/* 6. Fixtures Section (Tabs) */}
-      <section id="fixtures" className="py-24 bg-sports-gray/30">
+      <section id="fixtures" className="py-24 bg-app-card">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-16">
-            <h2 className="text-4xl font-black text-white uppercase tracking-tight">
+            <h2 className="text-4xl font-black text-app-text uppercase tracking-tight">
               Match <span className="text-sky-blue">Fixtures</span>
             </h2>
             <div className="flex flex-wrap gap-2">
@@ -397,7 +420,7 @@ export default function Home() {
                   className={`px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all border ${
                     activeSportTab === sport 
                       ? 'bg-sky-blue text-black border-sky-blue shadow-[0_0_15px_rgba(0,180,216,0.4)]' 
-                      : 'bg-white/5 text-gray-400 border-white/10 hover:border-white/30'
+                      : 'bg-app-card text-app-text/50 border-app-border hover:border-app-text/30'
                   }`}
                 >
                   {sport}
@@ -419,17 +442,17 @@ export default function Home() {
                     className="glass-card p-6 border-t-4 border-sky-blue group"
                   >
                     <div className="flex items-center justify-between mb-6">
-                      <div className="text-xs font-bold text-gray-500 uppercase tracking-widest">{fixture.sport}</div>
+                      <div className="text-xs font-bold text-app-text/40 uppercase tracking-widest">{fixture.sport}</div>
                       <div className="p-2 bg-sky-blue/10 rounded-lg">
                         <Calendar className="h-4 w-4 text-sky-blue" />
                       </div>
                     </div>
-                    <div className="flex items-center justify-between text-xl font-black text-white mb-8">
+                    <div className="flex items-center justify-between text-xl font-black text-app-text mb-8">
                       <span>{fixture.teamA}</span>
                       <span className="text-sky-blue text-sm italic">VS</span>
                       <span>{fixture.teamB}</span>
                     </div>
-                    <div className="flex items-center justify-between pt-4 border-t border-white/5 text-xs font-bold uppercase tracking-widest text-gray-400">
+                    <div className="flex items-center justify-between pt-4 border-t border-app-border text-xs font-bold uppercase tracking-widest text-app-text/50">
                       <div className="flex items-center space-x-2">
                         <Clock className="h-3 w-3 text-gold" />
                         <span>{fixture.time}</span>
@@ -439,7 +462,7 @@ export default function Home() {
                   </motion.div>
                 ))
               ) : (
-                <div className="col-span-full py-20 text-center text-gray-500 font-bold uppercase tracking-widest">
+                <div className="col-span-full py-20 text-center text-app-text/40 font-bold uppercase tracking-widest">
                   No upcoming {activeSportTab} fixtures found.
                 </div>
               )}
@@ -466,10 +489,10 @@ export default function Home() {
                 className="text-center p-8 glass-card"
               >
                 <stat.icon className={`h-10 w-10 mx-auto mb-6 ${stat.color}`} />
-                <div className="text-4xl md:text-5xl font-black text-white mb-2">
+                <div className="text-4xl md:text-5xl font-black text-app-text mb-2">
                   <Counter end={stat.value} />
                 </div>
-                <div className="text-xs font-bold text-gray-500 uppercase tracking-widest">{stat.label}</div>
+                <div className="text-xs font-bold text-app-text/50 uppercase tracking-widest">{stat.label}</div>
               </motion.div>
             ))}
           </div>
@@ -477,10 +500,10 @@ export default function Home() {
       </section>
 
       {/* 8. Interactive Sports Gallery */}
-      <section className="py-24 bg-sports-gray/30">
+      <section className="py-24 bg-app-card">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between mb-16">
-            <h2 className="text-4xl font-black text-white uppercase tracking-tight">
+            <h2 className="text-4xl font-black text-app-text uppercase tracking-tight">
               Sports <span className="text-gold">Gallery</span>
             </h2>
             <div className="flex items-center space-x-2 text-sky-blue font-bold uppercase tracking-widest text-xs">
@@ -489,12 +512,12 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-12">
             {galleryImages.map((img, i) => (
               <motion.div 
                 key={i}
                 whileHover={{ scale: 1.05, zIndex: 10 }}
-                className="aspect-square rounded-2xl overflow-hidden cursor-pointer shadow-xl border border-white/10 group"
+                className="aspect-square rounded-2xl overflow-hidden cursor-pointer shadow-xl border border-app-border group"
               >
                 <img 
                   src={img} 
@@ -504,6 +527,18 @@ export default function Home() {
                 />
               </motion.div>
             ))}
+          </div>
+
+          <div className="flex justify-center">
+            <a 
+              href="https://ndejjeschools.sc.ug/gallery/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="btn-secondary group"
+            >
+              <span>View More Images</span>
+              <ArrowRight className="inline-block ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+            </a>
           </div>
         </div>
       </section>

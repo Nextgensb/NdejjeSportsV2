@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 import Home from './pages/Home';
 import Auth from './pages/Auth';
 import UserDashboard from './pages/UserDashboard';
@@ -13,7 +14,7 @@ import ScrollToHash from './components/ScrollToHash';
 const ProtectedRoute = ({ children, role }: { children: React.ReactNode; role?: 'admin' | 'user' | 'superadmin' }) => {
   const { user, profile, loading } = useAuth();
 
-  if (loading) return <div className="h-screen flex items-center justify-center">Loading...</div>;
+  if (loading) return <div className="h-screen flex items-center justify-center bg-app-bg text-app-text">Loading...</div>;
   if (!user) return <Navigate to="/auth" />;
   
   // Superadmin can access everything
@@ -26,9 +27,10 @@ const ProtectedRoute = ({ children, role }: { children: React.ReactNode; role?: 
 
 export default function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <div className="min-h-screen bg-sports-black">
+    <ThemeProvider>
+      <AuthProvider>
+        <Router>
+        <div className="min-h-screen bg-app-bg transition-colors duration-300">
           <Navbar />
           <ScrollToHash />
           <Routes>
@@ -63,6 +65,7 @@ export default function App() {
           <Footer />
         </div>
       </Router>
-    </AuthProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }

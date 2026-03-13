@@ -72,7 +72,7 @@ export default function UserDashboard() {
   const seasons = ['2026', '2025', '2024'];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 flex flex-col lg:flex-row gap-8">
+    <div className="max-w-7xl mx-auto px-4 py-8 flex flex-col lg:flex-row gap-8 bg-app-bg min-h-screen">
       {/* Sidebar Navigation */}
       <aside className="w-full lg:w-64 space-y-6">
         <div className="glass-card p-6 border-t-4 border-gold">
@@ -81,8 +81,8 @@ export default function UserDashboard() {
               <UserIcon className="h-5 w-5 text-gold" />
             </div>
             <div>
-              <div className="text-sm font-bold text-white">{profile?.displayName || 'Athlete'}</div>
-              <div className="text-xs text-gray-500 uppercase tracking-widest font-black">Muteesa House</div>
+              <div className="text-sm font-bold text-app-text">{profile?.displayName || 'Athlete'}</div>
+              <div className="text-xs text-app-text/50 uppercase tracking-widest font-black">Muteesa House</div>
             </div>
           </div>
 
@@ -100,7 +100,7 @@ export default function UserDashboard() {
                 className={`w-full flex items-center justify-between p-3 rounded-xl transition-all ${
                   activeTab === item.id 
                     ? 'bg-gold text-black font-bold shadow-lg shadow-gold/20' 
-                    : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                    : 'text-app-text/40 hover:bg-app-card hover:text-app-text'
                 }`}
               >
                 <div className="flex items-center space-x-3">
@@ -115,7 +115,7 @@ export default function UserDashboard() {
 
         {/* Season Selector */}
         <div className="glass-card p-6">
-          <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4 block">Select Season</label>
+          <label className="text-xs font-bold text-app-text/50 uppercase tracking-widest mb-4 block">Select Season</label>
           <div className="space-y-2">
             {seasons.map((season) => (
               <button
@@ -123,8 +123,8 @@ export default function UserDashboard() {
                 onClick={() => setSelectedSeason(season)}
                 className={`w-full p-2 rounded-lg text-sm font-bold transition-all ${
                   selectedSeason === season 
-                    ? 'bg-white/10 text-gold border border-gold/30' 
-                    : 'text-gray-500 hover:text-gray-300'
+                    ? 'bg-gold/10 text-gold border border-gold/30' 
+                    : 'text-app-text/40 hover:text-app-text'
                 }`}
               >
                 {season} Season
@@ -149,19 +149,19 @@ export default function UserDashboard() {
                 {[
                   { label: 'Overall Rank', value: '#2', sub: 'Muteesa House', color: 'text-gold' },
                   { label: 'Total Points', value: '840', sub: '+120 this week', color: 'text-sky-blue' },
-                  { label: 'Games Played', value: '42', sub: 'Across 8 sports', color: 'text-white' },
+                  { label: 'Games Played', value: '42', sub: 'Across 8 sports', color: 'text-app-text' },
                 ].map((stat, i) => (
                   <div key={i} className="glass-card p-6">
-                    <div className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">{stat.label}</div>
+                    <div className="text-xs font-bold text-app-text/50 uppercase tracking-widest mb-2">{stat.label}</div>
                     <div className={`text-4xl font-black ${stat.color}`}>{stat.value}</div>
-                    <div className="text-sm text-gray-400 mt-1">{stat.sub}</div>
+                    <div className="text-sm text-app-text/40 mt-1">{stat.sub}</div>
                   </div>
                 ))}
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div className="glass-card p-8 border-t-4 border-sky-blue">
-                  <h3 className="text-xl font-bold text-white mb-6 uppercase tracking-tight">Performance <span className="text-sky-blue">per Sport</span></h3>
+                  <h3 className="text-xl font-bold text-app-text mb-6 uppercase tracking-tight">Performance <span className="text-sky-blue">per Sport</span></h3>
                   <div className="space-y-6">
                     {[
                       { sport: 'Football', score: 85, color: 'bg-gold' },
@@ -171,10 +171,10 @@ export default function UserDashboard() {
                     ].map((item, i) => (
                       <div key={i} className="space-y-2">
                         <div className="flex justify-between text-sm font-bold">
-                          <span className="text-gray-400 uppercase tracking-widest text-xs">{item.sport}</span>
-                          <span className="text-white">{item.score}%</span>
+                          <span className="text-app-text/50 uppercase tracking-widest text-xs">{item.sport}</span>
+                          <span className="text-app-text">{item.score}%</span>
                         </div>
-                        <div className="h-2 bg-white/5 rounded-full overflow-hidden">
+                        <div className="h-2 bg-app-bg rounded-full overflow-hidden">
                           <motion.div 
                             initial={{ width: 0 }}
                             animate={{ width: `${item.score}%` }}
@@ -188,20 +188,20 @@ export default function UserDashboard() {
                 </div>
 
                 <div className="glass-card p-8 border-t-4 border-gold">
-                  <h3 className="text-xl font-bold text-white mb-6 uppercase tracking-tight">Recent <span className="text-gold">Achievements</span></h3>
+                  <h3 className="text-xl font-bold text-app-text mb-6 uppercase tracking-tight">Recent <span className="text-gold">Achievements</span></h3>
                   <div className="space-y-4">
                     {[
                       { title: 'Gold Medal', sport: '100m Sprint', date: '2 days ago' },
                       { title: 'MVP Award', sport: 'Basketball', date: '1 week ago' },
                       { title: 'Clean Sheet', sport: 'Football', date: 'Mar 01' },
                     ].map((item, i) => (
-                      <div key={i} className="flex items-center space-x-4 p-3 rounded-xl bg-white/5 border border-white/5 hover:gold-border transition-all">
+                      <div key={i} className="flex items-center space-x-4 p-3 rounded-xl bg-app-bg border border-app-border hover:gold-border transition-all">
                         <div className="h-10 w-10 rounded-lg bg-gold/10 flex items-center justify-center">
                           <Trophy className="h-5 w-5 text-gold" />
                         </div>
                         <div>
-                          <div className="text-sm font-bold text-white uppercase">{item.title}</div>
-                          <div className="text-xs text-gray-500 uppercase tracking-widest">{item.sport} • {item.date}</div>
+                          <div className="text-sm font-bold text-app-text uppercase">{item.title}</div>
+                          <div className="text-xs text-app-text/50 uppercase tracking-widest">{item.sport} • {item.date}</div>
                         </div>
                       </div>
                     ))}
@@ -219,8 +219,8 @@ export default function UserDashboard() {
               className="space-y-6"
             >
               <div className="flex items-center justify-between mb-8">
-                <h2 className="text-2xl font-black text-white uppercase tracking-tight">Upcoming <span className="text-gold">Fixtures</span></h2>
-                <button className="flex items-center space-x-2 bg-white/5 px-4 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition-colors uppercase tracking-widest">
+                <h2 className="text-2xl font-black text-app-text uppercase tracking-tight">Upcoming <span className="text-gold">Fixtures</span></h2>
+                <button className="flex items-center space-x-2 bg-app-card px-4 py-2 rounded-lg text-sm font-bold text-app-text/50 hover:text-app-text transition-colors uppercase tracking-widest border border-app-border">
                   <Filter className="h-4 w-4" />
                   <span>Filter Sport</span>
                 </button>
@@ -234,13 +234,13 @@ export default function UserDashboard() {
                         <div className="text-xs font-bold text-gold uppercase">Mar 0{i+4}</div>
                         <div className="text-xl font-black text-white">14:30</div>
                       </div>
-                      <div className="h-12 w-px bg-white/10" />
+                      <div className="h-12 w-px bg-app-border" />
                       <div>
-                        <div className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Football • Senior Boys</div>
-                        <div className="text-lg font-bold text-white uppercase tracking-tight">Muteesa vs Kabalega</div>
+                        <div className="text-xs font-bold text-app-text/50 uppercase tracking-widest mb-1">Football • Senior Boys</div>
+                        <div className="text-lg font-bold text-app-text uppercase tracking-tight">Muteesa vs Kabalega</div>
                       </div>
                     </div>
-                    <ChevronRight className="h-5 w-5 text-gray-600 group-hover:text-gold transition-colors" />
+                    <ChevronRight className="h-5 w-5 text-app-text/20 group-hover:text-gold transition-colors" />
                   </div>
                 ))}
               </div>
@@ -254,12 +254,12 @@ export default function UserDashboard() {
               animate={{ opacity: 1 }}
               className="glass-card flex flex-col h-full max-h-[700px] overflow-hidden border-t-4 border-gold"
             >
-              <div className="p-6 border-b border-white/10 flex items-center justify-between bg-white/5">
+              <div className="p-6 border-b border-app-border flex items-center justify-between bg-app-bg/50">
                 <div className="flex items-center space-x-3">
                   <div className="h-3 w-3 rounded-full bg-gold animate-pulse" />
-                  <h3 className="font-bold text-white uppercase tracking-widest text-sm">Ndejje Sports Chat</h3>
+                  <h3 className="font-bold text-app-text uppercase tracking-widest text-sm">Ndejje Sports Chat</h3>
                 </div>
-                <div className="text-xs text-gray-500 font-bold uppercase tracking-widest">
+                <div className="text-xs text-app-text/50 font-bold uppercase tracking-widest">
                   {messages.length} Messages
                 </div>
               </div>
@@ -268,8 +268,8 @@ export default function UserDashboard() {
                 {messages.map((msg) => (
                   <div key={msg.id} className={`flex flex-col ${msg.sender === (profile?.displayName || profile?.email) ? 'items-end' : 'items-start'}`}>
                     <div className="flex items-center space-x-2 mb-1">
-                      <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{msg.sender}</span>
-                      <span className="text-[10px] text-gray-600 flex items-center">
+                      <span className="text-[10px] font-bold text-app-text/50 uppercase tracking-widest">{msg.sender}</span>
+                      <span className="text-[10px] text-app-text/30 flex items-center">
                         <Clock className="h-2 w-2 mr-1" />
                         {msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '...'}
                       </span>
@@ -277,7 +277,7 @@ export default function UserDashboard() {
                     <div className={`max-w-[80%] p-3 rounded-2xl text-sm ${
                       msg.sender === (profile?.displayName || profile?.email)
                         ? 'bg-gold text-black font-medium rounded-tr-none'
-                        : 'bg-white/10 text-white rounded-tl-none'
+                        : 'bg-app-bg text-app-text border border-app-border rounded-tl-none'
                     }`}>
                       {msg.text}
                     </div>
@@ -286,11 +286,11 @@ export default function UserDashboard() {
                 <div ref={chatEndRef} />
               </div>
 
-              <form onSubmit={handleSendMessage} className="p-4 bg-white/5 border-t border-white/10 flex gap-4">
+              <form onSubmit={handleSendMessage} className="p-4 bg-app-bg/50 border-t border-app-border flex gap-4">
                 <input 
                   type="text"
                   placeholder="Type your message..."
-                  className="flex-1 bg-sports-black border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold transition-colors"
+                  className="flex-1 bg-app-card border border-app-border rounded-xl px-4 py-3 text-sm text-app-text focus:outline-none focus:border-gold transition-colors"
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
                 />

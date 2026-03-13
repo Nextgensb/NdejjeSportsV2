@@ -7,17 +7,36 @@
   --color-sports-black: #0A0A0A;
   --color-sports-gray: #1A1A1A;
   --color-soft-blue: #E0F2F1;
+  
+  --color-app-bg: var(--app-bg);
+  --color-app-text: var(--app-text);
+  --color-app-card: var(--app-card);
+  --color-app-border: var(--app-border);
+}
+
+:root {
+  --app-bg: #F8F9FA;
+  --app-text: #1A1A1A;
+  --app-card: rgba(0, 0, 0, 0.05);
+  --app-border: rgba(0, 0, 0, 0.1);
+}
+
+.dark {
+  --app-bg: #0A0A0A;
+  --app-text: #FFFFFF;
+  --app-card: rgba(255, 255, 255, 0.05);
+  --app-border: rgba(255, 255, 255, 0.1);
 }
 
 @layer base {
   body {
-    @apply bg-sports-black text-white font-sans;
+    @apply bg-app-bg text-app-text font-sans transition-colors duration-300;
   }
 }
 
 @layer components {
   .glass-card {
-    @apply bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl shadow-xl;
+    @apply bg-app-card backdrop-blur-md border border-app-border rounded-2xl shadow-xl;
   }
   
   .gold-border {

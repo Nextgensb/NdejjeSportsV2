@@ -30,7 +30,6 @@ export default function Auth() {
     email: '',
     password: '',
     username: '',
-    displayName: '',
     role: 'user' as 'admin' | 'user',
     sport: SPORTS[0],
     level: CATEGORIES[0],
@@ -143,12 +142,12 @@ export default function Auth() {
         }
 
         const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
-        await updateProfile(userCredential.user, { displayName: formData.displayName });
+        await updateProfile(userCredential.user, { displayName: formData.username });
         
         const profileData: any = {
           uid: userCredential.user.uid,
           email: formData.email,
-          displayName: formData.displayName,
+          displayName: formData.username,
           username: formData.username,
           role: formData.role,
           createdAt: serverTimestamp(),
@@ -174,7 +173,7 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-64px)] flex bg-sports-black">
+    <div className="min-h-[calc(100vh-64px)] flex bg-app-bg">
       {/* Left Panel - Sports Background */}
       <div className="hidden lg:block lg:w-1/2 relative overflow-hidden">
         <motion.div 
@@ -190,7 +189,7 @@ export default function Auth() {
             referrerPolicy="no-referrer"
           />
         </motion.div>
-        <div className="absolute inset-0 bg-gradient-to-r from-sports-black via-sports-black/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-app-bg via-app-bg/40 to-transparent" />
         <div className="absolute inset-0 flex flex-col justify-center px-20">
           <motion.div
             initial={{ opacity: 0, x: -50 }}
@@ -210,11 +209,11 @@ export default function Auth() {
               ))}
             </div>
             <Trophy className="h-16 w-16 text-gold mb-8" />
-            <h2 className="text-6xl font-black text-white tracking-tighter mb-6 uppercase leading-none">
+            <h2 className="text-6xl font-black text-app-text tracking-tighter mb-6 uppercase leading-none">
               THE ARENA <br />
               <span className="text-gold">AWAITS YOU.</span>
             </h2>
-            <p className="text-xl text-gray-300 max-w-md italic font-medium">
+            <p className="text-xl text-app-text/70 max-w-md italic font-medium">
               "Tracking Performance, Celebrating Champions"
             </p>
           </motion.div>
@@ -233,20 +232,20 @@ export default function Auth() {
           </div>
 
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-black text-white mb-2 uppercase tracking-tight">
+            <h1 className="text-3xl font-black text-app-text mb-2 uppercase tracking-tight">
               {isLogin ? 'Arena Login' : 'Join the Arena'}
             </h1>
-            <p className="text-gray-400 text-sm font-medium">
+            <p className="text-app-text/50 text-sm font-medium">
               {isLogin ? 'Enter your credentials to access your dashboard' : 'Fill in the details to start your sports journey'}
             </p>
           </div>
 
           {/* Toggle Tabs */}
-          <div className="flex p-1 bg-white/5 rounded-2xl mb-8 border border-white/10">
+          <div className="flex p-1 bg-app-card rounded-2xl mb-8 border border-app-border">
             <button
               onClick={() => setIsLogin(true)}
               className={`flex-1 py-3 rounded-xl text-sm font-bold uppercase tracking-widest transition-all ${
-                isLogin ? 'bg-gold text-black shadow-lg' : 'text-gray-400 hover:text-white'
+                isLogin ? 'bg-gold text-black shadow-lg' : 'text-app-text/40 hover:text-app-text'
               }`}
             >
               Login
@@ -254,7 +253,7 @@ export default function Auth() {
             <button
               onClick={() => setIsLogin(false)}
               className={`flex-1 py-3 rounded-xl text-sm font-bold uppercase tracking-widest transition-all ${
-                !isLogin ? 'bg-gold text-black shadow-lg' : 'text-gray-400 hover:text-white'
+                !isLogin ? 'bg-gold text-black shadow-lg' : 'text-app-text/40 hover:text-app-text'
               }`}
             >
               Sign Up
@@ -293,34 +292,18 @@ export default function Auth() {
 
               <form onSubmit={handleSubmit} className="space-y-5">
                 {!isLogin && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em]">Username</label>
-                      <div className="relative group">
-                        <UserCircle className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500 group-focus-within:text-gold transition-colors" />
-                        <input 
-                          type="text"
-                          required
-                          placeholder="johndoe_25"
-                          className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-12 pr-4 text-white focus:outline-none focus:border-gold transition-all"
-                          value={formData.username}
-                          onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                        />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em]">Full Name</label>
-                      <div className="relative group">
-                        <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500 group-focus-within:text-gold transition-colors" />
-                        <input 
-                          type="text"
-                          required
-                          placeholder="John Doe"
-                          className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-12 pr-4 text-white focus:outline-none focus:border-gold transition-all"
-                          value={formData.displayName}
-                          onChange={(e) => setFormData({ ...formData, displayName: e.target.value })}
-                        />
-                      </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em]">Username</label>
+                    <div className="relative group">
+                      <UserCircle className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500 group-focus-within:text-gold transition-colors" />
+                      <input 
+                        type="text"
+                        required
+                        placeholder="johndoe_25"
+                        className="w-full bg-app-card border border-app-border rounded-xl py-3 pl-12 pr-4 text-app-text focus:outline-none focus:border-gold transition-all"
+                        value={formData.username}
+                        onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                      />
                     </div>
                   </div>
                 )}
@@ -333,7 +316,7 @@ export default function Auth() {
                       type="email"
                       required
                       placeholder="name@example.com"
-                      className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-12 pr-4 text-white focus:outline-none focus:border-gold transition-all"
+                      className="w-full bg-app-card border border-app-border rounded-xl py-3 pl-12 pr-4 text-app-text focus:outline-none focus:border-gold transition-all"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     />
@@ -355,7 +338,7 @@ export default function Auth() {
                       type={showPassword ? "text" : "password"}
                       required
                       placeholder="••••••••"
-                      className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-12 pr-12 text-white focus:outline-none focus:border-gold transition-all"
+                      className="w-full bg-app-card border border-app-border rounded-xl py-3 pl-12 pr-12 text-app-text focus:outline-none focus:border-gold transition-all"
                       value={formData.password}
                       onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                     />
@@ -374,11 +357,11 @@ export default function Auth() {
                     <input 
                       type="checkbox" 
                       id="remember" 
-                      className="rounded border-white/10 bg-white/5 text-gold focus:ring-gold"
+                      className="rounded border-app-border bg-app-card text-gold focus:ring-gold"
                       checked={formData.rememberMe}
                       onChange={(e) => setFormData({ ...formData, rememberMe: e.target.checked })}
                     />
-                    <label htmlFor="remember" className="text-xs text-gray-400 font-medium">Remember me for 30 days</label>
+                    <label htmlFor="remember" className="text-xs text-app-text/50 font-medium">Remember me for 30 days</label>
                   </div>
                 )}
 
