@@ -39,7 +39,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (docSnap.exists()) {
           const data = docSnap.data() as UserProfile;
           // Force superadmin role if email matches
-          if (user.email === 'ndejjesuperadmin@sport.com') {
+          if (user.email === 'nextgenofficialz35@gmail.com') {
             data.role = 'superadmin';
           }
           setProfile(data);
@@ -48,7 +48,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setProfile({
             uid: user.uid,
             email: user.email,
-            role: user.email === 'ndejjesuperadmin@sport.com' ? 'superadmin' : 'user',
+            role: user.email === 'nextgenofficialz35@gmail.com' ? 'superadmin' : 'user',
             displayName: user.displayName,
           });
         }

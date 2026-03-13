@@ -7,6 +7,7 @@ import {
   Activity, Award, Target
 } from 'lucide-react';
 import { auth, db } from '../lib/firebase';
+import { useAuth } from '../context/AuthContext';
 import { 
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword, 
@@ -17,9 +18,72 @@ import { SPORTS, CATEGORIES } from '../constants';
 
 const ADMIN_SETUP_PASSWORD = "nds1234"; // In a real app, this would be more secure
 
+enum OperationType {
+  CREATE = 'create',
+  UPDATE = 'update',
+  DELETE = 'delete',
+  LIST = 'list',
+  GET = 'get',
+  WRITE = 'write',
+}
+
+interface FirestoreErrorInfo {
+  error: string;
+  operationType: OperationType;
+  path: string | null;
+  authInfo: {
+    userId: string | undefined;
+    email: string | null | undefined;
+    emailVerified: boolean | undefined;
+    isAnonymous: boolean | undefined;
+    tenantId: string | null | undefined;
+    providerInfo: {
+      providerId: string;
+      displayName: string | null;
+      email: string | null;
+      photoUrl: string | null;
+    }[];
+  }
+}
+
+function handleFirestoreError(error: any, operationType: OperationType, path: string | null) {
+  if (error?.code === 'permission-denied' || error?.message?.includes('insufficient permissions')) {
+    const errInfo: FirestoreErrorInfo = {
+      error: error instanceof Error ? error.message : String(error),
+      authInfo: {
+        userId: auth.currentUser?.uid,
+        email: auth.currentUser?.email,
+        emailVerified: auth.currentUser?.emailVerified,
+        isAnonymous: auth.currentUser?.isAnonymous,
+        tenantId: auth.currentUser?.tenantId,
+        providerInfo: auth.currentUser?.providerData.map(provider => ({
+          providerId: provider.providerId,
+          displayName: provider.displayName,
+          email: provider.email,
+          photoUrl: provider.photoURL
+        })) || []
+      },
+      operationType,
+      path
+    };
+    console.error('Firestore Permission Error: ', JSON.stringify(errInfo));
+    throw new Error(JSON.stringify(errInfo));
+  }
+  throw error;
+}
+
 export default function Auth() {
+  const { user, profile } = useAuth();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user && profile) {
+      if (profile.role === 'admin') navigate('/admin');
+      else if (profile.role === 'superadmin') navigate('/admin/super');
+      else navigate('/dashboard');
+    }
+  }, [user, profile, navigate]);
   const [isLogin, setIsLogin] = useState(searchParams.get('mode') !== 'signup');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -107,6 +171,10 @@ export default function Auth() {
     setSuccess('');
 
     try {
+      if (formData.password.length < 6) {
+        throw new Error('Password must be at least 6 characters long.');
+      }
+
       await checkFailedAttempts(formData.email);
 
       if (isLogin) {
@@ -158,7 +226,11 @@ export default function Auth() {
           profileData.level = formData.level;
         }
 
-        await setDoc(doc(db, 'users', userCredential.user.uid), profileData);
+        try {
+          await setDoc(doc(db, 'users', userCredential.user.uid), profileData);
+        } catch (err) {
+          handleFirestoreError(err, OperationType.WRITE, `users/${userCredential.user.uid}`);
+        }
         
         setSuccess('Account created successfully! Redirecting...');
         setTimeout(() => {
@@ -166,7 +238,27 @@ export default function Auth() {
         }, 2000);
       }
     } catch (err: any) {
-      setError(err.message);
+      let message = err.message;
+      try {
+        const parsed = JSON.parse(err.message);
+        if (parsed.error) {
+          message = `Security Error: ${parsed.operationType} on ${parsed.path} was denied. Please contact support.`;
+        }
+      } catch (e) {
+        // Not a JSON error
+      }
+
+      if (err.code === 'auth/email-already-in-use') {
+        message = 'This email is already registered. Please login instead.';
+      } else if (err.code === 'auth/weak-password') {
+        message = 'The password is too weak. Please use at least 6 characters.';
+      } else if (err.code === 'auth/invalid-email') {
+        message = 'Please enter a valid email address.';
+      } else if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
+        message = 'Invalid email or password. Please try again.';
+      }
+
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -196,18 +288,6 @@ export default function Auth() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <div className="flex space-x-4 mb-8">
-              {['⚽', '🏀', '🏐', '♟'].map((icon, i) => (
-                <motion.div
-                  key={i}
-                  animate={{ y: [0, -10, 0] }}
-                  transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 }}
-                  className="text-3xl filter drop-shadow-[0_0_10px_rgba(255,215,0,0.5)]"
-                >
-                  {icon}
-                </motion.div>
-              ))}
-            </div>
             <Trophy className="h-16 w-16 text-gold mb-8" />
             <h2 className="text-6xl font-black text-app-text tracking-tighter mb-6 uppercase leading-none">
               THE ARENA <br />
@@ -469,7 +549,7 @@ export default function Auth() {
                   <span className="relative z-10 font-black uppercase tracking-[0.2em]">
                     {loading ? 'Processing...' : (isLogin ? 'Enter Arena' : 'Join Arena')}
                   </span>
-                  {!loading && <ArrowRight className="relative z-10 h-5 w-5 group-hover:translate-x-1 transition-transform" />}
+                  {!loading && <ArrowRight className="relative z-10 h-5 w-5" />}
                 </button>
               </form>
             </motion.div>

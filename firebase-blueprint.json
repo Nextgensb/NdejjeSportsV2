@@ -50,7 +50,62 @@
         "time": { "type": "string" },
         "category": { "type": "string" },
         "gender": { "type": "string" },
+        "venue": { "type": "string" },
         "status": { "type": "string", "enum": ["scheduled", "completed", "cancelled"] }
+      }
+    },
+    "OverallLeaderboard": {
+      "title": "Overall Leaderboard",
+      "description": "General ranking of all houses based on total performance.",
+      "type": "object",
+      "properties": {
+        "houseName": { "type": "string" },
+        "totalPoints": { "type": "integer" },
+        "gold": { "type": "integer" },
+        "silver": { "type": "integer" },
+        "bronze": { "type": "integer" },
+        "rank": { "type": "integer" }
+      }
+    },
+    "SportLeaderboard": {
+      "title": "Sport Leaderboard",
+      "description": "Ranking for a specific sport.",
+      "type": "object",
+      "properties": {
+        "sport": { "type": "string" },
+        "house": { "type": "string" },
+        "played": { "type": "integer" },
+        "wins": { "type": "integer" },
+        "losses": { "type": "integer" },
+        "points": { "type": "integer" },
+        "rank": { "type": "integer" }
+      }
+    },
+    "MVP": {
+      "title": "MVP",
+      "description": "Most Valuable Player information.",
+      "type": "object",
+      "properties": {
+        "playerName": { "type": "string" },
+        "house": { "type": "string" },
+        "sport": { "type": "string" },
+        "position": { "type": "string" },
+        "achievements": { "type": "string" },
+        "points": { "type": "integer" }
+      }
+    },
+    "Match": {
+      "title": "Match Result",
+      "description": "Latest match results across all sports.",
+      "type": "object",
+      "properties": {
+        "sport": { "type": "string" },
+        "houseA": { "type": "string" },
+        "houseB": { "type": "string" },
+        "scoreA": { "type": "integer" },
+        "scoreB": { "type": "integer" },
+        "date": { "type": "string" },
+        "result": { "type": "string" }
       }
     }
   },
@@ -70,6 +125,22 @@
     "/fixtures/{fixtureId}": {
       "schema": "Fixture",
       "description": "Sports match fixtures."
+    },
+    "/overall_leaderboard/{houseId}": {
+      "schema": "OverallLeaderboard",
+      "description": "Overall house rankings."
+    },
+    "/sport_leaderboards/{leaderboardId}": {
+      "schema": "SportLeaderboard",
+      "description": "Per-sport house rankings."
+    },
+    "/mvps/{mvpId}": {
+      "schema": "MVP",
+      "description": "Most Valuable Players list."
+    },
+    "/matches/{matchId}": {
+      "schema": "Match",
+      "description": "Completed match results."
     }
   }
 }

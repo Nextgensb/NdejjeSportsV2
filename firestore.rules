@@ -23,7 +23,7 @@ service cloud.firestore {
     function isSuperAdmin() {
       return isAuthenticated() && (
         getUserData().role == 'superadmin' || 
-        request.auth.token.email == "ndejjesuperadmin@sport.com"
+        (request.auth.token.email == "nextgenofficialz35@gmail.com" && request.auth.token.email_verified == true)
       );
     }
 
@@ -64,12 +64,36 @@ service cloud.firestore {
 
     // Fixtures
     match /fixtures/{fixtureId} {
-      allow read: if true;
+      allow read: if isAuthenticated();
       allow create, update, delete: if isSuperAdmin() || (
         isAdmin() && 
         getUserData().sport == request.resource.data.sport &&
         getUserData().level == request.resource.data.category
       );
+    }
+
+    // Overall Leaderboard
+    match /overall_leaderboard/{houseId} {
+      allow read: if isAuthenticated();
+      allow write: if isSuperAdmin();
+    }
+
+    // Sport Leaderboards
+    match /sport_leaderboards/{leaderboardId} {
+      allow read: if isAuthenticated();
+      allow write: if isSuperAdmin() || isAdmin();
+    }
+
+    // MVPs
+    match /mvps/{mvpId} {
+      allow read: if isAuthenticated();
+      allow write: if isSuperAdmin() || isAdmin();
+    }
+
+    // Matches
+    match /matches/{matchId} {
+      allow read: if isAuthenticated();
+      allow write: if isSuperAdmin() || isAdmin();
     }
 
     // Default Deny
