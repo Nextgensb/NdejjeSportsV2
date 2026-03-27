@@ -84,7 +84,7 @@ export default function Auth() {
       else navigate('/dashboard');
     }
   }, [user, profile, navigate]);
-  const [isLogin, setIsLogin] = useState(searchParams.get('mode') !== 'signup');
+  const isLogin = searchParams.get('mode') !== 'signup';
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -101,9 +101,11 @@ export default function Auth() {
     rememberMe: false
   });
 
-  useEffect(() => {
-    setIsLogin(searchParams.get('mode') !== 'signup');
-  }, [searchParams]);
+  const toggleMode = (mode: 'login' | 'signup') => {
+    setError('');
+    setSuccess('');
+    navigate(`/auth?mode=${mode}`, { replace: true });
+  };
 
   const logSecurityEvent = async (email: string, type: string, category: string) => {
     try {
@@ -323,17 +325,23 @@ export default function Auth() {
           {/* Toggle Tabs */}
           <div className="flex p-1 bg-app-card rounded-2xl mb-8 border border-app-border">
             <button
-              onClick={() => setIsLogin(true)}
-              className={`flex-1 py-3 rounded-xl text-sm font-bold uppercase tracking-widest transition-all ${
-                isLogin ? 'bg-gold text-black shadow-lg' : 'text-app-text/40 hover:text-app-text'
+              type="button"
+              onClick={() => toggleMode('login')}
+              className={`flex-1 py-3 rounded-xl text-sm font-black uppercase tracking-widest transition-all duration-300 ${
+                isLogin 
+                  ? 'bg-gold text-black shadow-lg shadow-gold/20 scale-[1.02]' 
+                  : 'text-app-text/40 hover:text-app-text hover:bg-white/5'
               }`}
             >
               Login
             </button>
             <button
-              onClick={() => setIsLogin(false)}
-              className={`flex-1 py-3 rounded-xl text-sm font-bold uppercase tracking-widest transition-all ${
-                !isLogin ? 'bg-gold text-black shadow-lg' : 'text-app-text/40 hover:text-app-text'
+              type="button"
+              onClick={() => toggleMode('signup')}
+              className={`flex-1 py-3 rounded-xl text-sm font-black uppercase tracking-widest transition-all duration-300 ${
+                !isLogin 
+                  ? 'bg-gold text-black shadow-lg shadow-gold/20 scale-[1.02]' 
+                  : 'text-app-text/40 hover:text-app-text hover:bg-white/5'
               }`}
             >
               Sign Up
@@ -457,26 +465,26 @@ export default function Auth() {
                         <button
                           type="button"
                           onClick={() => setFormData({ ...formData, role: 'user' })}
-                          className={`flex items-center justify-center space-x-2 p-3 rounded-xl border-2 transition-all ${
+                          className={`flex items-center justify-center space-x-2 p-4 rounded-xl border-2 transition-all duration-300 ${
                             formData.role === 'user' 
-                              ? 'border-sky-blue bg-sky-blue/10 text-sky-blue' 
-                              : 'border-white/10 text-gray-400 hover:border-white/20'
+                              ? 'border-sky-blue bg-sky-blue/10 text-sky-blue scale-[1.02] shadow-lg shadow-sky-blue/10' 
+                              : 'border-white/10 text-gray-400 hover:border-white/20 hover:bg-white/5'
                           }`}
                         >
-                          <UserCircle className="h-4 w-4" />
-                          <span className="font-bold text-xs uppercase tracking-widest">Normal User</span>
+                          <UserCircle className="h-5 w-5" />
+                          <span className="font-black text-xs uppercase tracking-widest">Normal User</span>
                         </button>
                         <button
                           type="button"
                           onClick={() => setFormData({ ...formData, role: 'admin' })}
-                          className={`flex items-center justify-center space-x-2 p-3 rounded-xl border-2 transition-all ${
+                          className={`flex items-center justify-center space-x-2 p-4 rounded-xl border-2 transition-all duration-300 ${
                             formData.role === 'admin' 
-                              ? 'border-gold bg-gold/10 text-gold' 
-                              : 'border-white/10 text-gray-400 hover:border-white/20'
+                              ? 'border-gold bg-gold/10 text-gold scale-[1.02] shadow-lg shadow-gold/10' 
+                              : 'border-white/10 text-gray-400 hover:border-white/20 hover:bg-white/5'
                           }`}
                         >
-                          <ShieldCheck className="h-4 w-4" />
-                          <span className="font-bold text-xs uppercase tracking-widest">Admin</span>
+                          <ShieldCheck className="h-5 w-5" />
+                          <span className="font-black text-xs uppercase tracking-widest">Admin</span>
                         </button>
                       </div>
                     </div>
@@ -497,7 +505,7 @@ export default function Auth() {
                                 value={formData.sport}
                                 onChange={(e) => setFormData({ ...formData, sport: e.target.value })}
                               >
-                                {SPORTS.map(s => <option key={s} value={s}>{s}</option>)}
+                                {SPORTS.map(s => <option key={s} value={s} className="bg-app-card">{s}</option>)}
                               </select>
                             </div>
                           </div>
@@ -510,7 +518,7 @@ export default function Auth() {
                                 value={formData.level}
                                 onChange={(e) => setFormData({ ...formData, level: e.target.value as any })}
                               >
-                                {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                                {CATEGORIES.map(c => <option key={c} value={c} className="bg-app-card">{c}</option>)}
                               </select>
                             </div>
                           </div>

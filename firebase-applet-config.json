@@ -1,9 +1,10 @@
 {
-  apiKey: "AIzaSyC6B1E06lLx4UwDxtewR4nVjqR9gN5NYp0",
-  authDomain: "ndejjesportv2.firebaseapp.com",
-  databaseURL: "https://ndejjesportv2-default-rtdb.firebaseio.com",
-  projectId: "ndejjesportv2",
-  storageBucket: "ndejjesportv2.firebasestorage.app",
-  messagingSenderId: "755972728028",
-  appId: "1:755972728028:web:ced6299a4f3ab5aa9d8019"
+  "apiKey": "AIzaSyC6B1E06lLx4UwDxtewR4nVjqR9gN5NYp0",
+  "authDomain": "ndejjesportv2.firebaseapp.com",
+  "databaseURL": "https://ndejjesportv2-default-rtdb.firebaseio.com",
+  "projectId": "ndejjesportv2",
+  "storageBucket": "ndejjesportv2.firebasestorage.app",
+  "messagingSenderId": "755972728028",
+  "appId": "1:755972728028:web:ced6299a4f3ab5aa9d8019",
+  "firestoreDatabaseId": "(default)"
 }

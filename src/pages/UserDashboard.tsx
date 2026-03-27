@@ -149,28 +149,43 @@ export default function UserDashboard() {
   // Real-time Data Fetching
   useEffect(() => {
     const unsubOverall = onSnapshot(
-      query(collection(db, 'overall_leaderboard'), where('season', '==', selectedSeason), orderBy('totalPoints', 'desc')),
-      (snap) => setOverallData(snap.docs.map(d => ({ id: d.id, ...d.data() } as OverallLeaderboard)))
+      query(collection(db, 'overall_leaderboard'), where('season', '==', selectedSeason)),
+      (snap) => {
+        const data = snap.docs.map(d => ({ id: d.id, ...d.data() } as OverallLeaderboard));
+        setOverallData(data.sort((a, b) => b.totalPoints - a.totalPoints));
+      }
     );
 
     const unsubSport = onSnapshot(
-      query(collection(db, 'sport_leaderboards'), where('season', '==', selectedSeason), where('sport', '==', selectedSport), orderBy('points', 'desc')),
-      (snap) => setSportData(snap.docs.map(d => ({ id: d.id, ...d.data() } as SportLeaderboard)))
+      query(collection(db, 'sport_leaderboards'), where('season', '==', selectedSeason), where('sport', '==', selectedSport)),
+      (snap) => {
+        const data = snap.docs.map(d => ({ id: d.id, ...d.data() } as SportLeaderboard));
+        setSportData(data.sort((a, b) => b.points - a.points));
+      }
     );
 
     const unsubMvp = onSnapshot(
-      query(collection(db, 'mvps'), where('season', '==', selectedSeason), orderBy('points', 'desc')),
-      (snap) => setMvpData(snap.docs.map(d => ({ id: d.id, ...d.data() } as MVP)))
+      query(collection(db, 'mvps'), where('season', '==', selectedSeason)),
+      (snap) => {
+        const data = snap.docs.map(d => ({ id: d.id, ...d.data() } as MVP));
+        setMvpData(data.sort((a, b) => b.points - a.points));
+      }
     );
 
     const unsubMatches = onSnapshot(
-      query(collection(db, 'matches'), where('season', '==', selectedSeason), orderBy('date', 'desc'), limit(20)),
-      (snap) => setMatchData(snap.docs.map(d => ({ id: d.id, ...d.data() } as Match)))
+      query(collection(db, 'matches'), where('season', '==', selectedSeason), limit(50)),
+      (snap) => {
+        const data = snap.docs.map(d => ({ id: d.id, ...d.data() } as Match));
+        setMatchData(data.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
+      }
     );
 
     const unsubFixtures = onSnapshot(
-      query(collection(db, 'fixtures'), where('season', '==', selectedSeason), where('status', '==', 'scheduled'), orderBy('date', 'asc')),
-      (snap) => setFixtureData(snap.docs.map(d => ({ id: d.id, ...d.data() } as Fixture)))
+      query(collection(db, 'fixtures'), where('season', '==', selectedSeason), where('status', '==', 'scheduled')),
+      (snap) => {
+        const data = snap.docs.map(d => ({ id: d.id, ...d.data() } as Fixture));
+        setFixtureData(data.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()));
+      }
     );
 
     return () => {
@@ -373,7 +388,7 @@ export default function UserDashboard() {
 
         {!isSidebarCollapsed && (
           <div className="px-6 mb-6">
-            <div className="bg-app-bg/50 border border-app-border rounded-xl p-3">
+            <div className="bg-app-bg/80 border border-app-border rounded-xl p-3">
               <label className="text-[10px] font-black text-app-text/30 uppercase tracking-widest block mb-2">Active Season</label>
               <select 
                 value={selectedSeason}
@@ -434,8 +449,8 @@ export default function UserDashboard() {
                 <Menu className="h-5 w-5" />
                 <span className="text-[10px] font-black uppercase tracking-[0.2em] hidden lg:block">Quick Nav</span>
               </button>
-              <div className="absolute left-0 mt-2 w-64 bg-app-card border border-app-border rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 overflow-hidden">
-                <div className="p-4 bg-app-bg/50 border-b border-app-border">
+              <div className="absolute left-0 mt-2 w-64 bg-app-bg/95 backdrop-blur-xl border border-app-border rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 overflow-hidden">
+                <div className="p-4 bg-app-card border-b border-app-border">
                   <span className="text-[10px] font-black text-gold uppercase tracking-widest">Jump to Section</span>
                 </div>
                 {sidebarItems.map(item => (
@@ -443,7 +458,7 @@ export default function UserDashboard() {
                     key={item.id}
                     onClick={() => setActiveTab(item.id as Tab)}
                     className={`w-full text-left px-6 py-4 text-[10px] font-black transition-all border-b border-app-border last:border-0 uppercase tracking-widest flex items-center space-x-4 ${
-                      activeTab === item.id ? 'bg-gold text-black' : 'text-app-text/60 hover:text-gold hover:bg-app-bg'
+                      activeTab === item.id ? 'bg-gold text-black' : 'text-app-text/60 hover:text-gold hover:bg-app-card'
                     }`}
                   >
                     <item.icon className="h-4 w-4" />
@@ -508,10 +523,10 @@ export default function UserDashboard() {
                     <Download className="h-5 w-5" />
                     <span className="font-bold uppercase tracking-widest text-xs">Download</span>
                   </button>
-                  <div className="absolute right-0 mt-2 w-48 bg-app-card border border-app-border rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
-                    <button onClick={() => downloadData('pdf')} className="w-full text-left px-4 py-3 text-sm text-app-text/70 hover:text-gold hover:bg-app-bg transition-colors border-b border-app-border rounded-t-xl">PDF Document</button>
-                    <button onClick={() => downloadData('excel')} className="w-full text-left px-4 py-3 text-sm text-app-text/70 hover:text-gold hover:bg-app-bg transition-colors border-b border-app-border">Excel Spreadsheet</button>
-                    <button onClick={() => downloadData('csv')} className="w-full text-left px-4 py-3 text-sm text-app-text/70 hover:text-gold hover:bg-app-bg transition-colors rounded-b-xl">CSV File</button>
+                  <div className="absolute right-0 mt-2 w-48 bg-app-bg/95 backdrop-blur-xl border border-app-border rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                    <button onClick={() => downloadData('pdf')} className="w-full text-left px-4 py-3 text-sm text-app-text/70 hover:text-gold hover:bg-app-card transition-colors border-b border-app-border rounded-t-xl">PDF Document</button>
+                    <button onClick={() => downloadData('excel')} className="w-full text-left px-4 py-3 text-sm text-app-text/70 hover:text-gold hover:bg-app-card transition-colors border-b border-app-border">Excel Spreadsheet</button>
+                    <button onClick={() => downloadData('csv')} className="w-full text-left px-4 py-3 text-sm text-app-text/70 hover:text-gold hover:bg-app-card transition-colors rounded-b-xl">CSV File</button>
                   </div>
                 </div>
               </div>
